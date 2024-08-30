@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Agregar Persona</title>
+    </h:head>
+    <h:body>
+        <h:form id="formAgregarPersona">
+            <p:panel header="Agregar Persona">
+                <p:messages  />
+                <p:panelGrid columns="2" columnClasses="label,value" styleClass="form-grid">
+                    <p:outputLabel for="nombre" value="Nombre:" />
+                    <p:inputText id="nombre" value="#{personaBean.persona.nombre}" required="true" />
+                    
+                    <p:outputLabel for="apellido" value="Apellido:" />
+                    <p:inputText id="apellido" value="#{personaBean.persona.apellido}" required="true" />
+                    
+                    <p:outputLabel for="telefono" value="Telefono:" />
+                    <p:inputText id="telefono" value="#{personaBean.persona.telefono}" required="true" />
+                    
+                    <p:outputLabel for="correo" value="Correo:" />
+                    <p:inputText id="correo" value="#{personaBean.persona.correo}" required="true" />
+                </p:panelGrid>
+                
+                <p:commandButton value="Agregar Persona" 
+                                 action="#{personaBean.agregarPersona()}" 
+                                 update=":formAgregarPersona :formListarPersonas:tablaPersonas"
+                                 icon="pi pi-save"
+                                 style="margin-top: 10px;"/>
+            </p:panel>
+        </h:form>
+
+        <h:form id="formListarPersonas">
+            <p:panel header="Lista de Personas">
+                <p:dataTable id="tablaPersonas" value="#{personaBean.personas}" var="persona" styleClass="personas-table">
+                    
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{persona.nombre}" />
+                    </p:column>
+                    <p:column headerText="Apellido">
+                        <h:outputText value="#{persona.apellido}" />
+                    </p:column>
+                    <p:column headerText="Telefono">
+                        <h:outputText value="#{persona.telefono}" />
+                    </p:column>
+                    <p:column headerText="Correo">
+                        <h:outputText value="#{persona.correo}" />
+                    </p:column>
+                    <p:column headerText="Estado">
+                        <h:outputText value="#{persona.estado}" />
+                    </p:column>
+                    <p:column headerText="Acciones">
+                        <p:commandButton value="Eliminar" 
+                                         actionListener="#{personaBean.prepararEliminacion(persona)}"
+                                         update=":dialogConfirmarEliminacion"
+                                         oncomplete="PF('dialogConfirmarEliminacion').show()"
+                                         icon="pi pi-trash"
+                                         styleClass="ui-button-raised ui-button-danger"
+                                         style="width: 120px; margin-right: 8px"/>
+                        
+                        <p:commandButton value="Editar  " 
+                                         action="#{personaBean.prepararEdicion(persona)}" 
+                                         update=":dialogEditar" 
+                                         oncomplete="PF('dialogEditar').show()"
+                                        icon="pi pi-user-edit"
+                                        style="width: 120px; margin-top: 10px;"/>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+        </h:form>
+        
+        <!-- Diálogo de Edición -->
+        <p:dialog id="dialogEditar" header="Editar Persona" widgetVar="dialogEditar" modal="true" showEffect="fade" hideEffect="fade">
+            <h:form id="formEditarPersona">
+                <p:panel>
+                    <p:messages />
+                    
+                    <h:outputText value="#{personaBean.persona.nombre} #{personaBean.persona.apellido}" 
+                              style="font-weight: bold; margin-bottom: 10px; display: block; text-align: center;" />
+      
+                        
+                    <p:panelGrid columns="2" columnClasses="label,value" styleClass="form-grid">                  
+
+                        <p:outputLabel for="telefonoEdit" value="Telefono:" />
+                        <p:inputText id="telefonoEdit" value="#{personaBean.persona.telefono}" required="true" />
+
+                        <p:outputLabel for="correoEdit" value="Correo:" />
+                        <p:inputText id="correoEdit" value="#{personaBean.persona.correo}" required="true" />
+                    </p:panelGrid>
+                    <h:panelGroup layout="block" styleClass="ui-grid-col-12" style="text-align:center; margin-top:20px;">
+                        <p:commandButton value="Guardar" action="#{personaBean.actualizarPersona()}" 
+                                         update=":formListarPersonas:tablaPersonas" 
+                                         oncomplete="PF('dialogEditar').hide()"
+                                         icon="pi pi-file-edit" 
+                                         styleClass="ui-button-primary"
+                                         style="margin-top: 10px;"/>
+                    </h:panelGroup>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+        
+        <!-- Diálogo de Confirmación -->
+        <p:dialog id="dialogConfirmarEliminacion" header="Confirmación" widgetVar="dialogConfirmarEliminacion" modal="true" showEffect="fade" hideEffect="fade">
+            <h:form id="formConfirmarEliminacion">
+                <h:outputText value="¿Está seguro de que desea eliminar esta persona?" />
+                <br />
+                <h:panelGroup layout="block" styleClass="ui-grid-col-12" style="text-align:center; margin-top: 10px;">
+                    <p:commandButton value="Sí" 
+                                     action="#{personaBean.confirmarEliminacion()}"
+                                     update=":formListarPersonas:tablaPersonas"
+                                     oncomplete="PF('dialogConfirmarEliminacion').hide()"
+                                     icon="pi pi-check"
+                                     styleClass="ui-button-success"
+                                     style="margin-right: 10px;"/>
+                    <p:commandButton value="No" 
+                                     onclick="PF('dialogConfirmarEliminacion').hide(); return false;"
+                                     icon="pi pi-times"
+                                     styleClass="ui-button-danger"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+      
+    </h:body>
+</html>

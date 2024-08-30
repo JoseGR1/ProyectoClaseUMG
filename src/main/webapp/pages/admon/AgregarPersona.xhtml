@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:body>
+        <h:form id="frmPrincipal">
+            <h:panelGroup id="grpPrincipal">
+                <p:outputPanel id="pnlPrincipal">
+                    <p:panelGrid id="grdDatos" columns="4">
+
+                        <p:outputLabel value="Nombre: " />
+                        <p:inputText id="txtNombre" value="#{bkn_indexUI.datosPersona.nombre}" />
+
+                        <p:outputLabel value="Apellido: " />
+                        <p:inputText id="txtApellido" value="#{bkn_indexUI.datosPersona.apellido}" />
+
+                        <p:outputLabel value="Teléfono: " />
+                        <p:inputText id="txtTelefono" value="#{bkn_indexUI.datosPersona.telefono}" />
+
+                        <p:outputLabel value="Correo: " />
+                        <p:inputText id="txtCorreo" value="#{bkn_indexUI.datosPersona.correo}" />
+
+                    </p:panelGrid>
+                    <p:commandButton id="btnMostrarDatos" value="Agregar"
+                                     action="#{bkn_indexUI.agregarPersona()}" 
+                                     update="flsDatos, grdDatos" />
+                </p:outputPanel>
+            </h:panelGroup>
+            <br />
+            <p:fieldset id="flsDatos" legend="Datos Persona">
+                <p:dataTable value="#{bkn_indexUI.list}" var="dato">
+                    <p:column headerText="Nombre">
+                        <p:outputLabel value="#{dato.nombre}" />
+                    </p:column>
+                    <p:column headerText="Apellido">
+                        <p:outputLabel value="#{dato.apellido}" />
+                    </p:column>
+                    <p:column headerText="Teléfono">
+                        <p:outputLabel value="#{dato.telefono}" />
+                    </p:column>
+                    <p:column headerText="Correo">
+                        <p:outputLabel value="#{dato.correo}" />
+                    </p:column>
+                    <p:column headerText="Estado">
+                        <p:outputLabel value="#{dato.estado eq 1 ? 'Activo' : 'Inactivo'}" />
+                    </p:column>
+                </p:dataTable>
+            </p:fieldset>
+        </h:form>
+    </h:body>
+</html>
