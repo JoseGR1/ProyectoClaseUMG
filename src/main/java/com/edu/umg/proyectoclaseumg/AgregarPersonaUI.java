@@ -1,7 +1,6 @@
 package com.edu.umg.proyectoclaseumg;
 
 import com.edu.umg.DTO.PersonaDTO;
-import com.edu.umg.bdd.DMLBdd;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ import javax.faces.bean.ManagedBean;
 @ManagedBean(name = "bkn_indexUI")
 
 public class AgregarPersonaUI implements Serializable {
-    
+    /*
     private PersonaDTO datosPersona;  // Objeto para capturar los datos del formulario
     private List<PersonaDTO> list;
     private DMLBdd dml = new DMLBdd();
@@ -86,4 +85,5 @@ public class AgregarPersonaUI implements Serializable {
     public void setList(List<PersonaDTO> list) {
         this.list = list;
     }
+*/
 }

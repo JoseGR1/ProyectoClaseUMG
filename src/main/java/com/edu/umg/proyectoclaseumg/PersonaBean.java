@@ -1,95 +1,76 @@
 package com.edu.umg.proyectoclaseumg;
 
+import com.edu.umg.DAO.PersonaDAO;
 import com.edu.umg.DTO.PersonaDTO;
-import com.edu.umg.bdd.DMLBdd;
+
+import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import java.io.Serializable;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
-
-//Cambio
 
 @ManagedBean(name = "personaBean")
-@ViewScoped
+@SessionScoped
 public class PersonaBean implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
-    private PersonaDTO persona;
-    private DMLBdd dml;
-    private List<PersonaDTO> personas;
+    private PersonaDTO persona;  // Objeto persona que se vincula con el formulario
+    private List<PersonaDTO> personas;  // Lista de personas para mostrar en la tabla
+    private PersonaDAO personaDAO;  // DAO para realizar las operaciones
 
     @PostConstruct
     public void init() {
         persona = new PersonaDTO();
-        dml = new DMLBdd();
-        cargarPersonas();  // Cargar personas al inicio
+        personaDAO = new PersonaDAO();
+        personas = personaDAO.listaPersona();  // Inicializa la lista de personas
     }
 
+    // Método para agregar una nueva persona
     public void agregarPersona() {
         try {
-            dml.agregarPersona(persona);
-            FacesContext.getCurrentInstance().addMessage(null, new javax.faces.application.FacesMessage("Persona agregada exitosamente."));
-            persona = new PersonaDTO(); // Reset form
-            cargarPersonas();  // Recargar la lista de personas
+            personaDAO.agregarPersona(persona);
+            personas = personaDAO.listaPersona();  // Refresca la lista
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Persona agregada correctamente"));
+            persona = new PersonaDTO();  // Limpia el formulario
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, new javax.faces.application.FacesMessage("Error al agregar persona: " + e.getMessage()));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo agregar la persona"));
         }
     }
 
-    public void cargarPersonas() {
-        try {
-            personas = dml.listaPersona();
-        } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, new javax.faces.application.FacesMessage("Error al cargar personas: " + e.getMessage()));
-        }
+    // Método para preparar la edición de una persona (abre el diálogo)
+    public void prepararEdicion(PersonaDTO personaSeleccionada) {
+        this.persona = personaSeleccionada;
     }
-    
-        public void eliminarPersona(PersonaDTO persona) {
-    try {
-        dml.eliminarPersona(persona.getIdPersona());
-        FacesContext.getCurrentInstance().addMessage(null, new javax.faces.application.FacesMessage("Persona eliminada exitosamente."));
-        cargarPersonas();  // Recargar la lista de personas
-    } catch (Exception e) {
-        FacesContext.getCurrentInstance().addMessage(null, new javax.faces.application.FacesMessage("Error al eliminar persona: " + e.getMessage()));
-    }
-}
-        
-       public void prepararEdicion(PersonaDTO persona) {
-        this.persona = persona;
-    }
-    
-    
+
+    // Método para actualizar la persona
     public void actualizarPersona() {
         try {
-            dml.actualizarPersona(persona);
-            FacesContext.getCurrentInstance().addMessage(null, new javax.faces.application.FacesMessage("Persona actualizada exitosamente."));
-            persona = new PersonaDTO(); // Reset form
-            cargarPersonas();  // Recargar la lista de personas
+            personaDAO.actualizarPersona(persona);
+            personas = personaDAO.listaPersona();  // Refresca la lista
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Persona actualizada correctamente"));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, new javax.faces.application.FacesMessage("Error al actualizar persona: " + e.getMessage()));
-        }
-    } 
-    
-    // Método para preparar la eliminación
-    public void prepararEliminacion(PersonaDTO persona) {
-        this.persona = persona;
-    }
-    
-    // Método para confirmar la eliminación
-    public void confirmarEliminacion() {
-        try {
-            dml.eliminarPersona(persona.getIdPersona());
-            FacesContext.getCurrentInstance().addMessage(null, new javax.faces.application.FacesMessage("Persona eliminada exitosamente."));
-            cargarPersonas();  // Recargar la lista de personas
-        } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, new javax.faces.application.FacesMessage("Error al eliminar persona: " + e.getMessage()));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo actualizar la persona"));
         }
     }
 
-    // Getters and Setters
+    // Método para preparar la eliminación de una persona
+    public void prepararEliminacion(PersonaDTO personaSeleccionada) {
+        this.persona = personaSeleccionada;
+    }
+
+    // Método para confirmar la eliminación de la persona
+    public void confirmarEliminacion() {
+        try {
+            personaDAO.eliminarPersona(persona.getIdPersona());
+            personas = personaDAO.listaPersona(); // Refresca la lista
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Persona eliminada correctamente"));
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo eliminar la persona"));
+        }
+    }
+
+    // Getters y Setters
     public PersonaDTO getPersona() {
         return persona;
     }
@@ -105,5 +86,4 @@ public class PersonaBean implements Serializable {
     public void setPersonas(List<PersonaDTO> personas) {
         this.personas = personas;
     }
-
 }
